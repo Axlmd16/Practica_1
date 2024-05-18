@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="bg-dark text-white p-5 mt-5">
+    <h1 class="h1 text-center mb-5">Servicios Públicos</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+
+            {% for servicio in servicios %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{servicio._nombre}}</h5>
+                        <p class="card-text my-4">{{servicio._descripcion}}</p>
+                        <div class="mt-4 text-center">
+                            <a href="{{ url_for('router.listar_atenciones', id=servicio._id ) }}"
+                                class="btn btn-primary mx-2">Ver
+                                detalles</a>
+                            <a href="{{ url_for('router.guardar_atencion', id=servicio._id ) }}"
+                                class="btn btn-info">Registrar
+                                atencion</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</main>
+
+{% endblock %}
