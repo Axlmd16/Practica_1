@@ -1,0 +1,81 @@
+{% extends 'base.html' %} {% block content %}
+
+<main class="booking-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-12 mx-auto">
+        <div class="booking-form-wrap">
+          <form
+            class="custom-form booking-form"
+            action="#"
+            method="post"
+            role="form"
+            id="formulario"
+          >
+            <div class="row-sm-2 mb-4 text-end mx-1">
+              <h2 class="text-white text-center h2">
+                Registrar Atencion - Servicio 1
+              </h2>
+              <a href="#" class="btn btn-primary">Ver lista</a>
+            </div>
+            <div class="booking-form-body">
+              <div class="row">
+                <div class="col-lg-6 col-12">
+                  <label for="fecha" class="form-label">Fecha:</label>
+                  <input
+                    type="date"
+                    name="fecha"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-lg-6 col-12">
+                  <label class="form-label" for="">Calificacion</label>
+                  <select class="form-control" name="calificacion">
+                    <option value="Bueno">Bueno</option>
+                    <option value="Muy Bueno">Muy Bueno</option>
+                    <option value="Excelente">Excelente</option>
+                    <option value="Lento">Lento</option>
+                    <option value="Muy Lento">Muy Lento</option>
+                    <option value="Malo">Malo</option>
+                  </select>
+                </div>
+                <div class="col-lg-6 col-12">
+                  <label for="tiempo" class="form-label"
+                    >Tiempo de despacho: (Minutos)</label
+                  >
+                  <input
+                    type="number"
+                    name="tiempo"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="comentario" class="form-label">Comentario:</label>
+                  <textarea
+                    name="comentario"
+                    class="form-control"
+                    placeholder="Comentario"
+                    rows="5"
+                  ></textarea>
+                </div>
+                <div class="col-12 text-center">
+                  <button
+                    type="submit"
+                    id="boton"
+                    class="btn custom-btn custom-border-btn"
+                  >
+                    Agregar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

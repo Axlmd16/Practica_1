@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block content %}
+<section class="booking-section">
+  <div class="container-md">
+    <div class="booking-form-wrap">
+      <h2 class="text-center my-5 pb-lg-2 text-white">
+        Atenciones Registradas
+      </h2>
+      <form id="sortingForm" class="d-flex justify-content-end mb-4">
+        <div class="mx-2">
+          <select
+            id="sortMethod"
+            name="sort_method"
+            class="form-select btn-info"
+          >
+            <option value="quick_sort" selected>Quick Sort</option>
+            <option value="merge_sort">Merge Sort</option>
+            <option value="shell_sort">Shell Sort</option>
+          </select>
+        </div>
+      </form>
+      <table id="tabla" class="table table-dark table-hover text-center">
+        <thead>
+          <tr>
+            <th>Nro</th>
+            <th>
+              Fecha
+              <button
+                type="button"
+                class="btn btn-info btn-sm mx-1 sort-button"
+                data-attr="fecha"
+              >
+                <i class="bi bi-arrow-down-up"></i>
+              </button>
+            </th>
+            <th>
+              Tiempo de despacho
+              <button
+                type="button"
+                class="btn btn-info btn-sm mx-1 sort-button"
+                data-attr="tiempo_despacho"
+              >
+                <i class="bi bi-arrow-down-up"></i>
+              </button>
+            </th>
+            <th>
+              Calificación
+              <button
+                type="button"
+                class="btn btn-info btn-sm mx-1 sort-button"
+                data-attr="calificacion"
+              >
+                <i class="bi bi-arrow-down-up"></i>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="atencionesBody">
+          {% for atencion in atenciones %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ atencion.fecha }}</td>
+            <td>{{ atencion.tiempo_despacho }} Min</td>
+            <td>{{ atencion.calificacion }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- JavaScript para manejar el clic en el botón -->
+<script>
+  let sortOrder = {};
+
+  document.querySelectorAll(".sort-button").forEach((button) => {
+    button.addEventListener("click", function () {
+      const sortAttribute = this.getAttribute("data-attr");
+      const sortMethod = document.getElementById("sortMethod").value;
+      const id = "{{ id }}";
+
+      if (
+        sortOrder[sortAttribute] === undefined ||
+        sortOrder[sortAttribute] === 1
+      ) {
+        sortOrder[sortAttribute] = 0; // Ascendente
+      } else {
+        sortOrder[sortAttribute] = 1; // Descendente
+      }
+
+      const order = sortOrder[sortAttribute];
+      const url = `/atencion/ordenar/${id}?sort_method=${sortMethod}&attr=${sortAttribute}&order=${order}`;
+      console.log("Atributo de ordenamiento:", sortAttribute);
+      console.log("Método de ordenamiento:", sortMethod);
+      console.log("Orden:", order);
+      console.log("URL:", url);
+      console.log("\n");
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          const atencionesBody = document.getElementById("atencionesBody");
+          atencionesBody.innerHTML = "";
+          data.data.forEach((atencion, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${atencion.fecha}</td>
+              <td>${atencion.tiempo_despacho} Min</td>
+              <td>${atencion.calificacion}</td>
+            `;
+            atencionesBody.appendChild(row);
+          });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Ocurrió un error al ordenar las atenciones");
+        });
+    });
+  });
+</script>
+{% endblock %}
