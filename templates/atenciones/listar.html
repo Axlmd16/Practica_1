@@ -5,8 +5,37 @@
       <h2 class="text-center my-5 pb-lg-2 text-white">
         Atenciones Registradas
       </h2>
-      <form id="sortingForm" class="d-flex justify-content-end mb-4">
-        <div class="mx-2">
+      <button class="btn btn-secondary mx-3 mb-2">
+        <i class="bi bi-arrow-clockwise text-black" onclick="location.reload()">
+          Recargar
+        </i>
+      </button>
+      <div class="d-flex justify-content-start mb-4 mx-3">
+        <div class="me-2">
+          <select id="attr_search" name="attr_search" class="form-select">
+            <option value="" selected>Seleccione una búsqueda</option>
+            <option value="fecha">Fecha</option>
+            <option value="tiempo_despacho_menor">Menores a (min)</option>
+            <option value="tiempo_despacho_mayor">Mayores a (min)</option>
+            <option value="calificacion">Calificación</option>
+          </select>
+        </div>
+        <div class="me-2">
+          <input
+            type="text"
+            name="text_search"
+            id="text_search"
+            disabled
+            class="form-control form-control-md"
+            required
+          />
+        </div>
+        <div class="me-2">
+          <button type="button" class="btn btn-info" id="searchButton" disabled>
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+        <div class="ms-auto">
           <select
             id="sortMethod"
             name="sort_method"
@@ -17,7 +46,7 @@
             <option value="shell_sort">Shell Sort</option>
           </select>
         </div>
-      </form>
+      </div>
       <table id="tabla" class="table table-dark table-hover text-center">
         <thead>
           <tr>
@@ -69,33 +98,87 @@
   </div>
 </section>
 
-<!-- JavaScript para manejar el clic en el botón -->
+<!-- JavaScript para manejar la habilitación del input y el botón -->
 <script>
-  let sortOrder = {};
+  document.addEventListener("DOMContentLoaded", function () {
+    // Elementos del DOM
+    const attrSearch = document.getElementById("attr_search");
+    const textSearch = document.getElementById("text_search");
+    const searchButton = document.getElementById("searchButton");
+    const sortButtons = document.querySelectorAll(".sort-button");
+    let sortOrder = {};
 
-  document.querySelectorAll(".sort-button").forEach((button) => {
-    button.addEventListener("click", function () {
-      const sortAttribute = this.getAttribute("data-attr");
-      const sortMethod = document.getElementById("sortMethod").value;
-      const id = "{{ id }}";
+    // Evento para el select de búsqueda
+    attrSearch.addEventListener("change", function () {
+      const selectedAttr = this.value;
+      const isDisabled = !selectedAttr;
+      textSearch.disabled = isDisabled;
 
-      if (
-        sortOrder[sortAttribute] === undefined ||
-        sortOrder[sortAttribute] === 1
+      // Cambiar el tipo de input basado en la opción seleccionada
+      if (selectedAttr === "fecha") {
+        textSearch.type = "date";
+        textSearch.placeholder = "Seleccione una fecha";
+      } else if (
+        selectedAttr === "tiempo_despacho_menor" ||
+        selectedAttr === "tiempo_despacho_mayor"
       ) {
-        sortOrder[sortAttribute] = 0; // Ascendente
+        textSearch.type = "number";
+        textSearch.placeholder = "Ingrese un número";
       } else {
-        sortOrder[sortAttribute] = 1; // Descendente
+        textSearch.type = "text";
+        textSearch.placeholder = "Ingrese texto de búsqueda";
       }
 
-      const order = sortOrder[sortAttribute];
-      const url = `/atencion/ordenar/${id}?sort_method=${sortMethod}&attr=${sortAttribute}&order=${order}`;
-      console.log("Atributo de ordenamiento:", sortAttribute);
-      console.log("Método de ordenamiento:", sortMethod);
-      console.log("Orden:", order);
-      console.log("URL:", url);
+      // Limpiar el input de búsqueda y deshabilitar el botón
+      textSearch.value = "";
+      searchButton.disabled = true;
+    });
+
+    // Evento para el campo de búsqueda para habilitar el botón
+    textSearch.addEventListener("input", function () {
+      searchButton.disabled = !textSearch.value.trim();
+    });
+
+    // Evento para el botón de búsqueda
+    searchButton.addEventListener("click", function () {
+      const attr = attrSearch.value;
+      const text = textSearch.value.trim();
+      const id = "{{ id }}";
+
+      if (!text) {
+        alert("Por favor, ingrese un valor de búsqueda.");
+        return;
+      }
+
+      const url = `/atencion/buscar/${id}?attr=${attr}&text=${text}`;
+      console.log("Atributo de búsqueda:", attr);
+      console.log("Texto de búsqueda:", text);
       console.log("\n");
 
+      fetchData(url);
+    });
+
+    // Evento para los botones de ordenamiento
+    sortButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const sortAttribute = this.getAttribute("data-attr");
+        const sortMethod = document.getElementById("sortMethod").value;
+        const id = "{{ id }}";
+
+        sortOrder[sortAttribute] = sortOrder[sortAttribute] === 1 ? 0 : 1;
+        const order = sortOrder[sortAttribute];
+        const url = `/atencion/ordenar/${id}?sort_method=${sortMethod}&attr=${sortAttribute}&order=${order}`;
+        console.log("Atributo de ordenamiento:", sortAttribute);
+        console.log("Método de ordenamiento:", sortMethod);
+        console.log("Orden:", order);
+        console.log("\n");
+
+        fetchData(url);
+      });
+    });
+
+    // Función para obtener los datos de la API
+    function fetchData(url) {
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
@@ -114,9 +197,9 @@
         })
         .catch((error) => {
           console.error("Error:", error);
-          alert("Ocurrió un error al ordenar las atenciones");
+          alert("Ocurrió un error al procesar la solicitud");
         });
-    });
+    }
   });
 </script>
 {% endblock %}

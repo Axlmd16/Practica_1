@@ -79,4 +79,4 @@ class Atencion:
         return atencion
 
     def __str__(self) -> str:
-        return f"Fecha: {self.__fecha}, Comentario: {self.__comentario}, Calificacion: {self.__calificacion}, Tiempo Despacho: {self.__tiempo_despacho}, Id Servidor Publico: {self.__id_servidor_publico}"
+        return f"Fecha: {self.__fecha}, Comentario: {self.__comentario}, Calificacion: {self.__calificacion}, Tiempo_Despacho: {self.__tiempo_despacho}, Id Servidor Publico: {self.__id_servidor_publico}"

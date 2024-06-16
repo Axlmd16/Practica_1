@@ -1,5 +1,5 @@
 from controls.tda.list.linked_list import Linked_List
-from controls.tda.list.sorts.quick import Quick
+from controls.tda.list.searchs.search import Search
 from flask import (
     Blueprint,
     request,
@@ -22,6 +22,9 @@ ac = AtencionControl()
 @router.route("/")
 def home():
     servicios = vc.list()
+
+    print(type(servicios))
+
     return render_template("index.html", servicios=servicios)
 
 
@@ -67,9 +70,6 @@ def ordenar_atenciones(id):
     order = request.args.get("order")
     print(sort_method, attr, order)
 
-    if not attr:
-        return jsonify({"msg": "Atributo de ordenamiento no especificado"}), 400
-
     atenciones = Linked_List()
 
     for atencion in ac.list():
@@ -82,5 +82,45 @@ def ordenar_atenciones(id):
         {
             "msg": "Ordenado exitosamente",
             "data": [atencion.serializable() for atencion in sorted_atenciones],
+        }
+    )
+
+
+@router.route("/atencion/buscar/<int:id>", methods=["GET"])
+def buscar_atenciones(id):
+    value_search = request.args.get("text")
+    attr_search = request.args.get("attr")
+
+    atenciones = Linked_List()
+
+    for atencion in ac.list():
+        if atencion._id_servidor_publico == id:
+            atenciones.add(atencion)
+
+    if attr_search == "fecha":
+        atencion_found = Search().search_models_binary(
+            attr_search, value_search, atenciones
+        )
+        found_atenciones = Linked_List()
+        if atencion_found is not None:
+            found_atenciones.add(atencion_found)
+
+    elif attr_search == "calificacion":
+        found_atenciones = Search().search_models_lb(
+            attr_search, value_search, atenciones
+        )
+    elif attr_search == "tiempo_despacho_menor":
+        found_atenciones = Search().search_tiempo_menor(
+            "tiempo_despacho", int(value_search), atenciones
+        )
+    elif attr_search == "tiempo_despacho_mayor":
+        found_atenciones = Search().search_tiempo_mayor(
+            "tiempo_despacho", int(value_search), atenciones
+        )
+
+    return jsonify(
+        {
+            "msg": "Busqueda exitosa",
+            "data": [atencion.serializable() for atencion in found_atenciones],
         }
     )
