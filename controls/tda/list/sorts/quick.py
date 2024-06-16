@@ -1,3 +1,6 @@
+import random
+
+
 class Quick:
     def sort(self, array, attr, ascendente=True):
         size = len(array)
@@ -38,6 +41,8 @@ class Quick:
             self.__quick_sort_numbers(array, pi + 1, high, ascending)
 
     def __partition_numbers(self, array, low, high, ascending):
+        pivot_index = random.randint(low, high)
+        array[pivot_index], array[high] = (array[high], array[pivot_index])
         pivot = array[high]
         i = low - 1
         for j in range(low, high):

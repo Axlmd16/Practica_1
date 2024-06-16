@@ -259,7 +259,7 @@ class Linked_List(object):
                     sorted_array = Quick().sort(array, sort_attribute, order)
                 elif algorithm == "merge_sort":
                     sorted_array = Merge().sort(array, sort_attribute, order)
-                else:
+                elif algorithm == "shell_sort":
                     sorted_array = Shell().sort(array, sort_attribute, order)
 
                 self.to_list(sorted_array)
@@ -295,102 +295,3 @@ class Linked_List(object):
     #             array.sort(key=get_key, reverse=type != 1)
     #         self.to_list(array)
     #     return self
-
-    def search_numbers_lineal(self, value):
-        lista = Linked_List()
-        if self.is_empty:
-            raise Exception("List is empty")
-        else:
-            array = self.to_array
-            for i in range(0, len(array)):
-                if array[i] == value:
-                    lista.add(array[i])
-        return lista
-    
-
-    # def search_models(self, attribute, value):
-    #     lista = Linked_List()
-    #     if self.is_empty:
-    #         raise Exception("List is empty")
-    #     else:
-    #         array = self.to_array
-    #         if isinstance(array[0], object):
-    #             array = [x for x in array if getattr(x, "_" + attribute) == value]
-    #         lista.to_list(array)
-    #     return lista
-
-    def search_models_binary(self, attribute, value):
-        if self.is_empty:
-            raise Exception("List is empty")
-        else:
-            self.sort_models(attribute)
-            array = self.to_array
-            if isinstance(array[0], object):
-                low = 0
-                high = len(array) - 1
-                while low <= high:
-                    mid = (low + high) // 2
-                    if getattr(array[mid], "_" + attribute) == value:
-                        return array[mid]
-                    elif getattr(array[mid], "_" + attribute) < value:
-                        low = mid + 1
-                    else:
-                        high = mid - 1
-        return None
-
-    def search_models_lb(self, attribute, value):
-        if self.is_empty:
-            raise Exception("List is empty")
-        else:
-            index = self.__search_binary_index(attribute, value)
-            if index is None:
-                return []
-
-            lista = Linked_List()
-            array = self.to_array
-            results = []
-
-            left = index
-            while left >= 0 and getattr(array[left], "_" + attribute) == value:
-                results.insert(0, array[left])
-                left -= 1
-
-            right = index + 1
-            while (
-                right < len(array) and getattr(array[right], "_" + attribute) == value
-            ):
-                results.append(array[right])
-                right += 1
-
-            lista.to_list(results)
-        return lista
-
-    def __search_binary_index(self, attribute, value):
-        if self.is_empty:
-            raise Exception("List is empty")
-        else:
-            self.sort_models(attribute)
-            array = self.to_array
-            if isinstance(array[0], object):
-                low = 0
-                high = len(array) - 1
-                while low <= high:
-                    mid = (low + high) // 2
-                    if getattr(array[mid], "_" + attribute) == value:
-                        return mid
-                    elif getattr(array[mid], "_" + attribute) < value:
-                        low = mid + 1
-                    else:
-                        high = mid - 1
-        return None
-
-    # def search_time_minors(self, value):
-    #     lista = Linked_List()
-    #     if self.is_empty:
-    #         raise Exception("List is empty")
-    #     else:
-    #         array = self.to_array
-    #         if isinstance(array[0], object):
-    #             array = [x for x in array if getattr(x, "_" + attribute) < value]
-    #         lista.to_list(array)
-    #     return lista

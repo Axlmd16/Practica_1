@@ -3,13 +3,14 @@ import random
 import time
 
 from controls.tda.list.linked_list import Linked_List
+from controls.tda.list.searchs.search import Search
 
 sys.path.append("../")
 
 
 lista = Linked_List()
 for i in range(25000):
-    lista.add(random.randint(0, 1000))
+    lista.add(random.randint(0, 200))
 
 
 print("Quick sort:")

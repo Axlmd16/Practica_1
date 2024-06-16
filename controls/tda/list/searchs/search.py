@@ -1,3 +1,4 @@
+from numbers import Number
 from controls.tda.list.linked_list import Linked_List
 
 
@@ -65,7 +66,18 @@ class Search:
                         low = mid + 1
                     else:
                         high = mid - 1
-        return low
+            elif isinstance(array[0], Number):
+                low = 0
+                high = len(array) - 1
+                while low <= high:
+                    mid = (low + high) // 2
+                    if array[mid] == value:
+                        return mid
+                    elif array[mid] < value:
+                        low = mid + 1
+                    else:
+                        high = mid - 1
+        return None
 
     def search_tiempo_menor(self, attribute, value, lista):
         if lista.is_empty:
@@ -114,25 +126,36 @@ class Search:
                     lista_search.add(number)
         return lista_search
 
-    def search_numbers_binary_lineal(self, value, lista):
+    def search_numbers_bl(self, value, lista):
         if lista.is_empty:
             raise Exception("List is empty")
-        else:
-            index = self.__search_binary_index(value, lista)
-            if index is None:
-                return Linked_List()
-
-            lista_search = Linked_List()
-            array = lista.to_array
-
-            left = index
-            while left >= 0 and array[left] == value:
-                lista_search.add(array[left])
-                left -= 1
-
-            right = index + 1
-            while right < len(array) and array[right] == value:
-                lista_search.add(array[right])
-                right += 1
+        array = lista.to_array
+        index = self.__search_bi(value, array)
+        if index is None:
+            return Linked_List()
+        lista_search = Linked_List()
+        left = index
+        while left >= 0 and array[left] == value:
+            lista_search.add_first(array[left])
+            left -= 1
+        right = index + 1
+        while right < len(array) and array[right] == value:
+            lista_search.add_last(array[right])
+            right += 1
 
         return lista_search
+
+    def __search_bi(self, value, array):
+        low = 0
+        high = len(array) - 1
+
+        while low <= high:
+            mid = (low + high) // 2
+            if array[mid] == value:
+                return mid
+            elif array[mid] < value:
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        return None
